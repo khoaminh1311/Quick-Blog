@@ -8,11 +8,12 @@ import ErrorState from '../../components/common/ErrorState';
 import Skeleton from '../../components/common/Skeleton';
 import { getPostById } from '../../services/postService';
 import { useAuth } from '../../hooks/useAuth';
+import { normalizeApiError } from '../../utils/apiError';
 
 export default function PostDetailPage() {
   const { postId } = useParams();
   const navigate = useNavigate();
-  const { accessToken } = useAuth();
+  const { accessToken, logout } = useAuth();
   
   const [post, setPost] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,11 +26,14 @@ export default function PostDetailPage() {
       try {
         const data = await getPostById(postId, accessToken);
         setPost(data);
-      } catch (err) {
-        if (err.message === 'Not Found') {
+      } catch (error) {
+        const apiErr = normalizeApiError(error);
+        if (apiErr.status === 401) {
+          logout();
+        } else if (apiErr.status === 404) {
           setError('The post you are looking for does not exist.');
         } else {
-          setError(err.message || 'Failed to load post');
+          setError(apiErr.message || 'Failed to load post');
         }
       } finally {
         setIsLoading(false);
@@ -109,8 +113,8 @@ export default function PostDetailPage() {
           </h1>
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-slate-500 dark:text-slate-400">
             <div className="flex items-center gap-2">
-              <img src={post.author.avatar} alt={post.author.name} className="w-10 h-10 rounded-full bg-slate-200" loading="lazy" />
-              <span className="font-medium text-slate-900 dark:text-slate-200">{post.author.name}</span>
+              <img src={post.author?.avatar || 'https://api.dicebear.com/7.x/avataaars/svg?seed=fallback'} alt={post.author?.username} className="w-10 h-10 rounded-full bg-slate-200" loading="lazy" />
+              <span className="font-medium text-slate-900 dark:text-slate-200">{post.author?.username || 'Unknown Author'}</span>
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4" />
@@ -123,7 +127,7 @@ export default function PostDetailPage() {
 
         <div className="w-full aspect-[2/1] md:aspect-video relative bg-slate-100 dark:bg-slate-800">
           <img 
-            src={post.coverImage} 
+            src={post.image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070'} 
             alt={post.title} 
             className="absolute inset-0 w-full h-full object-cover"
             loading="lazy"

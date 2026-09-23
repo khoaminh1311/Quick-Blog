@@ -10,9 +10,10 @@ import SearchBar from '../../components/posts/SearchBar';
 import { getPosts } from '../../services/postService';
 import { useDebounce } from '../../hooks/useDebounce';
 import { useAuth } from '../../hooks/useAuth';
+import { normalizeApiError } from '../../utils/apiError';
 
 export default function HomePage() {
-  const { accessToken } = useAuth();
+  const { accessToken, logout } = useAuth();
   const [posts, setPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,8 +45,13 @@ export default function HomePage() {
       }
       // hasMore: there are more pages beyond the current one
       setHasMore(response.page < response.totalPages);
-    } catch (err) {
-      setError(err.message || 'Failed to fetch posts');
+    } catch (error) {
+      const apiErr = normalizeApiError(error);
+      if (apiErr.status === 401) {
+        logout();
+      } else {
+        setError(apiErr.message || 'Failed to fetch posts');
+      }
     } finally {
       setIsLoading(false);
       setIsLoadingMore(false);
@@ -105,10 +111,14 @@ export default function HomePage() {
         ) : (
           <>
             <PostGrid>
-              {posts.map(post => (
-                // Real API uses _id; key will be updated per-card in Phase 7
-                <PostCard key={post._id} post={post} />
-              ))}
+              {posts
+                .filter(post => 
+                  !debouncedSearch || 
+                  post.title?.toLowerCase().includes(debouncedSearch.toLowerCase())
+                )
+                .map(post => (
+                  <PostCard key={post._id} post={post} />
+                ))}
             </PostGrid>
 
             {hasMore && (
