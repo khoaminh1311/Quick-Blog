@@ -46,16 +46,15 @@ export default function AppRoutes() {
           <Route path="/register" element={<RegisterPage />} />
         </Route>
 
-        {/* ── Public pages: anyone can access ───────────────────────────── */}
-        <Route path="/forbidden" element={<ForbiddenPage />} />
-        <Route path="*"          element={<NotFoundPage />} />
+        {/* ── Public pages with Layout ──────────────────────────────────── */}
+        <Route element={<AppLayout />}>
+          <Route path="/"              element={<HomePage />} />
+          <Route path="/posts/:postId" element={<PostDetailPage />} />
+          <Route path="/forbidden"     element={<ForbiddenPage />} />
 
-        {/* ── Protected: any authenticated user ─────────────────────────── */}
-        <Route element={<ProtectedRoute />}>
-          <Route element={<AppLayout />}>
-            <Route path="/"              element={<HomePage />} />
+          {/* ── Protected: any authenticated user ─────────────────────────── */}
+          <Route element={<ProtectedRoute />}>
             <Route path="/posts/new"     element={<CreatePostPage />} />
-            <Route path="/posts/:postId" element={<PostDetailPage />} />
             <Route path="/my-posts"      element={<MyPostsPage />} />
 
             {/* ── Role-protected: admin only ───────────────────────────── */}
@@ -65,6 +64,8 @@ export default function AppRoutes() {
           </Route>
         </Route>
 
+        {/* ── Catch-all 404 (Public) ────────────────────────────────────── */}
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
   );
