@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import quickBlogLogo from '../../components/quick-blog-logo.png';
+import Toast from '../../components/common/Toast';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -50,7 +51,10 @@ export default function LoginPage() {
       navigate(from, { replace: true });
     } catch (err) {
       // err is already a normalized { status, message, data } object.
-      setServerError(err.message || 'Login failed. Please try again.');
+      const msg = (err.status === 401 || err.message === 'Unauthorized' || err.message?.toLowerCase().includes('credential'))
+        ? 'Sai email hoặc mật khẩu'
+        : (err.message || 'Login failed. Please try again.');
+      setServerError(msg);
     } finally {
       setIsSubmitting(false);
     }
@@ -66,21 +70,13 @@ export default function LoginPage() {
 
   return (
     <main className="grid min-h-screen place-items-center bg-[linear-gradient(120deg,#070724_0%,#5947f0_48%,#05c7df_100%)] px-4 py-10">
+      <Toast message={serverError} onClose={() => setServerError('')} />
       <form onSubmit={handleSubmit} className="w-full max-w-md rounded-lg bg-white p-8 shadow-xl" noValidate>
-        <Link to="/" className="block">
-          <img
-            alt="QuickBlog"
-            className="mx-auto mb-8 h-16 object-contain"
-            src={quickBlogLogo}
-          />
-        </Link>
-
-        {/* Server / network error banner */}
-        {serverError && (
-          <div className="mb-4 px-4 py-3 rounded-md bg-red-50 border border-red-200 text-red-600 text-sm font-medium">
-            {serverError}
-          </div>
-        )}
+        <img
+          alt="QuickBlog"
+          className="mx-auto mb-8 h-16 object-contain"
+          src={quickBlogLogo}
+        />
 
         <div className="space-y-4">
           <div>

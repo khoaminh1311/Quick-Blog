@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Loader2, ImageUp } from 'lucide-react';
 import { uploadImage } from '../../services/uploadService';
+import Toast from '../common/Toast';
 
 /**
  * ImageUpload Component
@@ -128,18 +129,7 @@ export default function ImageUpload({ value, onChange, disabled }) {
         </button>
       )}
 
-      {error && (
-        <div className="mt-3 flex items-start gap-2 text-red-600 dark:text-red-400 text-sm">
-          <span className="flex-1 font-medium">{error}</span>
-          <button 
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 font-semibold underline underline-offset-2"
-          >
-            Try Again
-          </button>
-        </div>
-      )}
+      <Toast message={error} onClose={() => setError(null)} />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { X, Loader2 } from 'lucide-react';
 import ImageUpload from './ImageUpload';
 import RichTextEditor from './RichTextEditor';
 import { stripHtmlAndTruncate } from '../../utils/postContent';
+import Toast from '../common/Toast';
 
 export default function PostForm({ 
   initialData = { title: '', content: '', image: '', tags: [] }, 
@@ -15,6 +16,8 @@ export default function PostForm({
   const [tagInput, setTagInput] = useState('');
   const [tags, setTags] = useState(initialData.tags);
   const [error, setError] = useState('');
+
+  const [toastKey, setToastKey] = useState(0);
 
   const handleAddTag = () => {
     const trimmed = tagInput.trim();
@@ -30,31 +33,19 @@ export default function PostForm({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setError('');
-
-    // Validation
-    if (!image) {
-      setError('Please upload a cover image.');
-      return;
-    }
 
     const trimmedTitle = title.trim();
-    if (!trimmedTitle) {
-      setError('Title cannot be empty.');
-      return;
-    }
-
-    // Check if content has actual text
     const plainText = stripHtmlAndTruncate(content, 100000).trim();
-    if (!plainText && !content.includes('<img')) {
-      setError('Content cannot be empty.');
+    const hasContent = !!plainText || content.includes('<img');
+
+    // Validation: unified message when any field is incomplete
+    if (!image || !trimmedTitle || !hasContent || tags.length === 0) {
+      setError('Please complete image, title, content and tags');
+      setToastKey((prev) => prev + 1);
       return;
     }
 
-    if (tags.length === 0) {
-      setError('Please add at least one tag.');
-      return;
-    }
+    setError('');
 
     // Call parent handler
     onSubmit({
@@ -152,11 +143,7 @@ export default function PostForm({
         </div>
       </label>
 
-      {error && (
-        <div className="p-3 rounded-md bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 text-sm font-medium">
-          {error}
-        </div>
-      )}
+      <Toast key={toastKey} message={error} onClose={() => setError('')} />
 
       {/* Submit Button */}
       <div className="flex justify-center">
