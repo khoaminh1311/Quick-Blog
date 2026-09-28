@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';
-import { Puzzle } from 'lucide-react';
-import Container from '../../components/common/Container';
 import ErrorState from '../../components/common/ErrorState';
 import UserTable from '../../components/users/UserTable';
 import { getUsers } from '../../services/userService';
@@ -61,47 +59,45 @@ export default function UsersPage() {
   };
 
   return (
-    <Container className="max-w-6xl pb-12 bg-slate-50/50 dark:bg-slate-900 min-h-screen pt-12">
-      <div className="flex flex-col items-center mb-8">
-        <div className="flex items-center gap-3">
-          <Puzzle className="w-10 h-10 text-emerald-400 fill-emerald-400 rotate-[-15deg]" />
-          <h1 className="text-[40px] font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500 tracking-tight">
-            User Management
-          </h1>
-        </div>
-      </div>
+    <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pb-12 min-h-screen pt-12">
+      <h1 
+        className="mb-10 flex items-center justify-center gap-3 text-[40px] font-bold text-indigo-600"
+        style={{ color: 'oklch(0.511 0.262 276.966)', fontSize: '40px' }}
+      >
+        <span aria-hidden="true">🧩</span> User Management
+      </h1>
 
-      <div className="pb-16 bg-slate-50 dark:bg-slate-900 rounded-3xl p-2 sm:p-4">
-        {isLoading ? (
-          <div className="space-y-4 py-8">
-            <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
-            <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
-            <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
-            <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
-          </div>
-        ) : error ? (
+      {isLoading ? (
+        <div className="min-h-[420px] rounded-lg bg-slate-50 p-6 dark:bg-slate-900 space-y-4">
+          <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+          <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+          <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+          <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+        </div>
+      ) : error ? (
+        <div className="min-h-[420px] rounded-lg bg-slate-50 p-6 dark:bg-slate-900 flex items-center justify-center">
           <ErrorState
             title="Failed to load users"
             message={error}
             onRetry={handleRetry}
           />
-        ) : (
-          <>
-            {actionError && (
-              <div className="mb-4 p-4 rounded-xl bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400 text-sm font-medium">
-                {actionError}
-              </div>
-            )}
-            <UserTable 
-              users={users} 
-              onChangeRoleSuccess={handleRoleChangeSuccess}
-              onDeleteSuccess={handleDeleteSuccess}
-              onChangeRoleError={handleActionError}
-              onDeleteError={handleActionError}
-            />
-          </>
-        )}
-      </div>
-    </Container>
+        </div>
+      ) : (
+        <>
+          {actionError && (
+            <div className="mb-4 p-4 rounded-xl bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400 text-sm font-medium">
+              {actionError}
+            </div>
+          )}
+          <UserTable 
+            users={users} 
+            onChangeRoleSuccess={handleRoleChangeSuccess}
+            onDeleteSuccess={handleDeleteSuccess}
+            onChangeRoleError={handleActionError}
+            onDeleteError={handleActionError}
+          />
+        </>
+      )}
+    </div>
   );
 }

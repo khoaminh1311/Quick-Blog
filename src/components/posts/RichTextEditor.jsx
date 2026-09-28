@@ -33,7 +33,7 @@ export default function RichTextEditor({ value, onChange, disabled }) {
   const isDarkMode = document.documentElement.classList.contains('dark');
 
   return (
-    <div className="rich-text-editor-container border border-slate-300 dark:border-slate-700 rounded-md overflow-hidden">
+    <div className="rich-text-editor-container overflow-hidden">
       <Editor
         apiKey={apiKey}
         onInit={(_evt, editor) => editorRef.current = editor}
@@ -42,16 +42,18 @@ export default function RichTextEditor({ value, onChange, disabled }) {
         disabled={disabled}
         init={{
           height: 400,
-          menubar: false,
+          menubar: 'file edit view insert format tools table',
+          promotion: false,
+          branding: false,
           plugins: [
-            'advlist', 'autolink', 'lists', 'link',
+            'advlist', 'autolink', 'lists', 'link', 'image',
             'searchreplace', 'visualblocks', 'code', 'fullscreen',
-            'insertdatetime', 'table', 'code', 'help', 'wordcount'
+            'insertdatetime', 'table', 'help', 'wordcount'
           ],
           toolbar: 'undo redo | blocks | ' +
-            'bold italic underline removeformat | alignleft aligncenter ' +
+            'bold italic | alignleft aligncenter ' +
             'alignright alignjustify | bullist numlist outdent indent | ' +
-            'link code | help',
+            'link image | code',
           content_style: 'body { font-family: Inter, Helvetica, Arial, sans-serif; font-size: 16px; }',
           skin: isDarkMode ? 'oxide-dark' : 'oxide',
           content_css: isDarkMode ? 'dark' : 'default',

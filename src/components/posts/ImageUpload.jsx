@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, Loader2, UploadCloud } from 'lucide-react';
+import { X, Loader2, ImageUp } from 'lucide-react';
 import { uploadImage } from '../../services/uploadService';
 
 /**
@@ -108,24 +108,24 @@ export default function ImageUpload({ value, onChange, disabled }) {
           )}
         </div>
       ) : (
-        <div 
+        <button
+          type="button"
           onClick={() => !disabled && !isUploading && fileInputRef.current?.click()}
-          className={`border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-12 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-800/50 transition-colors ${
-            disabled || isUploading ? 'opacity-60 cursor-not-allowed' : 'hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer group'
-          }`}
+          disabled={disabled || isUploading}
+          className="flex h-24 w-full items-center justify-center gap-3 rounded-lg border border-dashed border-slate-300 bg-white text-slate-600 transition hover:border-indigo-400 hover:text-indigo-600 disabled:opacity-60 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-300"
         >
           {isUploading ? (
-             <Loader2 className="w-8 h-8 animate-spin mb-3 text-indigo-500" />
+            <>
+              <Loader2 className="h-5 w-5 animate-spin" />
+              <span>Uploading image...</span>
+            </>
           ) : (
-            <UploadCloud className="w-8 h-8 mb-3 text-slate-400 group-hover:text-indigo-500 transition-colors" />
+            <>
+              <ImageUp className="lucide-image-up h-5 w-5" />
+              <span>Click to upload image</span>
+            </>
           )}
-          <span className="text-sm font-medium">
-            {isUploading ? 'Uploading...' : 'Click to upload cover image'}
-          </span>
-          <span className="text-xs text-slate-400 mt-1">
-            JPG, PNG or GIF (max. 5MB)
-          </span>
-        </div>
+        </button>
       )}
 
       {error && (

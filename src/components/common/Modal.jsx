@@ -1,8 +1,9 @@
 import { useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import { X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
-export default function Modal({ isOpen, onClose, title, children }) {
+export default function Modal({ isOpen, onClose, title, description, children }) {
   const modalRef = useRef(null);
 
   useEffect(() => {
@@ -14,17 +15,11 @@ export default function Modal({ isOpen, onClose, title, children }) {
 
     if (isOpen) {
       document.addEventListener('keydown', handleKeyDown);
-      // Basic focus trap - focus the modal content when opened
       modalRef.current?.focus();
-      // Prevent body scroll
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
     }
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
 
@@ -38,36 +33,52 @@ export default function Modal({ isOpen, onClose, title, children }) {
 
   const modalContent = (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 bg-black/20"
       onClick={handleBackdropClick}
     >
       <div 
         ref={modalRef}
-        tabIndex={-1}
-        className="bg-white dark:bg-slate-900 rounded-xl shadow-xl w-full max-w-md max-h-[90vh] overflow-y-auto focus:outline-none"
         role="dialog"
+        data-state="open"
+        tabIndex={-1}
         aria-modal="true"
-        aria-labelledby="modal-title"
+        style={{ pointerEvents: 'auto' }}
+        onClick={(e) => e.stopPropagation()}
+        className="fixed left-1/2 top-1/2 z-50 w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white p-6 shadow-2xl dark:bg-slate-900 focus:outline-none"
       >
-        <div className="flex items-center justify-between p-4 border-b border-slate-100 dark:border-slate-800">
-          <h2 id="modal-title" className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-4 top-4 rounded-md p-1 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100 transition-colors"
+          aria-label="Close modal"
+        >
+          <X className="lucide-x h-4 w-4" />
+        </button>
+
+        {title && (
+          <h2 className="text-lg font-bold text-slate-950 dark:text-slate-50">
             {title}
           </h2>
-          <button
-            onClick={onClose}
-            className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:hover:text-slate-300 dark:hover:bg-slate-800 transition-colors"
-            aria-label="Close modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        <div className="p-4">
-          {children}
-        </div>
+        )}
+
+        {description && (
+          <p className="mt-3 text-sm leading-6 text-slate-600 dark:text-slate-300">
+            {description}
+          </p>
+        )}
+
+        {children}
       </div>
     </div>
   );
 
-  // Use createPortal to mount modal at the end of body to avoid z-index and overflow issues
   return createPortal(modalContent, document.body);
 }
+
+Modal.propTypes = {
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  title: PropTypes.string,
+  description: PropTypes.node,
+  children: PropTypes.node,
+};

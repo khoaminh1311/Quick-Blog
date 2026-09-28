@@ -13,10 +13,10 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
-import Container from '../common/Container';
 import ThemeToggle from './ThemeToggle';
-import { User, LogOut, FileText, LogIn, UserPlus, Plus, ShieldCheck } from 'lucide-react';
+import { User, LogOut, Plus, ClipboardList, Users, SquarePen } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import logoImg from '../quick-blog-logo.png';
 
 export default function Header() {
   const { isAuthenticated, user, logout } = useAuth();
@@ -46,133 +46,128 @@ export default function Header() {
   const closeDropdown = () => setIsDropdownOpen(false);
 
   return (
-    <header className="bg-transparent absolute top-0 left-0 right-0 z-50">
-      <Container>
-        <div className="flex h-20 items-center justify-between">
+    <header className="relative z-30 border-b border-transparent bg-white/90 backdrop-blur dark:bg-slate-950/90">
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-3 sm:h-24 sm:px-6">
 
-          {/* ── Logo ─────────────────────────────────────────────────────── */}
-          <div className="flex-shrink-0">
-            <Link to="/" className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-              <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center">
-                <div className="w-4 h-4 bg-white rounded-sm"></div>
-              </div>
-              <span>Quickblog</span>
-            </Link>
-          </div>
+        {/* ── Logo ─────────────────────────────────────────────────────── */}
+        <Link
+          to="/"
+          className="flex items-center"
+          aria-label="QuickBlog home"
+        >
+          <img
+            alt="QuickBlog"
+            className="h-10 w-auto sm:h-12"
+            src={logoImg}
+          />
+        </Link>
 
-          {/* ── Right-side controls ───────────────────────────────────────── */}
-          <div className="flex items-center gap-4 sm:gap-6">
+        {/* ── Right-side controls ───────────────────────────────────────── */}
+        <div className="flex items-center gap-2 sm:gap-5">
 
-            {/* Create Blog — only shown when authenticated */}
-            {isAuthenticated && (
-              <NavLink
-                to="/posts/new"
-                className="flex items-center justify-center gap-2 bg-indigo-600 text-white w-10 h-10 sm:w-auto sm:h-auto sm:px-5 sm:py-2.5 rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium shadow-sm shadow-indigo-200 dark:shadow-none"
-                title="Create blog"
-              >
-                <Plus className="w-5 h-5 sm:hidden" />
-                <span className="hidden sm:inline">Create blog</span>
-              </NavLink>
-            )}
+          {/* Create Blog button */}
+          <NavLink
+            to="/posts/new"
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:pointer-events-none disabled:opacity-60 bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 h-8 rounded-md px-3 text-xs font-bold sm:h-9 sm:text-sm"
+            title="Create Blog"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Create Blog</span>
+          </NavLink>
 
-            <ThemeToggle />
+          <ThemeToggle />
 
-            {/* ── User Dropdown ─────────────────────────────────────────── */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center justify-center gap-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 px-3 h-10 min-w-[2.5rem]"
-                aria-expanded={isDropdownOpen}
-                aria-haspopup="true"
-                id="user-menu-button"
-              >
-                <User className="w-5 h-5 flex-shrink-0" />
-                {isAuthenticated && user?.username && (
-                  <span className="hidden sm:inline text-sm font-medium max-w-[120px] truncate">
-                    {user.username}
-                  </span>
+          {/* ── User Dropdown ─────────────────────────────────────────── */}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:pointer-events-none disabled:opacity-60 border border-slate-200 bg-white text-slate-900 shadow-sm hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:hover:bg-slate-900 h-9 w-9 rounded-lg sm:h-11 sm:w-[3.25rem]"
+              aria-label="Open user menu"
+              type="button"
+              id="user-menu-button"
+              aria-haspopup="menu"
+              aria-expanded={isDropdownOpen}
+            >
+              <User className="h-5 w-5" />
+            </button>
+
+            {isDropdownOpen && (
+              <div className="absolute right-0 mt-2 z-50 min-w-[12.5rem] w-52 rounded-lg border border-slate-100 bg-white p-1.5 shadow-lg shadow-slate-900/10 dark:border-slate-800 dark:bg-slate-900">
+                {isAuthenticated ? (
+                  <>
+                    <Link
+                      to="/posts/new"
+                      className="flex h-9 items-center gap-3 rounded-md px-2.5 text-sm font-normal text-slate-950 outline-none transition hover:bg-slate-50 dark:text-slate-100 dark:hover:bg-slate-800 sm:hidden whitespace-nowrap"
+                      onClick={closeDropdown}
+                    >
+                      <SquarePen className="h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400" />
+                      <span>Create Blog</span>
+                    </Link>
+
+                    <Link
+                      to="/my-posts"
+                      className="flex h-9 items-center gap-3 rounded-md px-2.5 text-sm font-normal text-slate-950 outline-none transition hover:bg-slate-50 dark:text-slate-100 dark:hover:bg-slate-800 whitespace-nowrap"
+                      onClick={closeDropdown}
+                    >
+                      <ClipboardList className="h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400" />
+                      <span>My Posts</span>
+                    </Link>
+
+                    {isAdmin && (
+                      <Link
+                        to="/admin/users"
+                        className="flex h-9 items-center gap-3 rounded-md px-2.5 text-sm font-normal text-slate-950 outline-none transition hover:bg-slate-50 dark:text-slate-100 dark:hover:bg-slate-800 whitespace-nowrap"
+                        onClick={closeDropdown}
+                      >
+                        <Users className="h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400" />
+                        <span>User Management</span>
+                      </Link>
+                    )}
+
+                    <button
+                      onClick={handleLogout}
+                      className="flex h-9 w-full cursor-pointer items-center gap-3 rounded-md px-2.5 text-sm font-normal text-slate-950 outline-none transition hover:bg-slate-50 dark:text-slate-100 dark:hover:bg-slate-800 text-left whitespace-nowrap"
+                      id="logout-button"
+                    >
+                      <LogOut className="h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400" />
+                      <span>Logout</span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      to="/posts/new"
+                      className="flex h-9 items-center gap-3 rounded-md px-2.5 text-sm font-normal text-slate-950 outline-none transition hover:bg-slate-50 dark:text-slate-100 dark:hover:bg-slate-800 sm:hidden whitespace-nowrap"
+                      onClick={closeDropdown}
+                    >
+                      <SquarePen className="h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400" />
+                      <span>Create Blog</span>
+                    </Link>
+
+                    <Link
+                      to="/my-posts"
+                      className="flex h-9 items-center gap-3 rounded-md px-2.5 text-sm font-normal text-slate-950 outline-none transition hover:bg-slate-50 dark:text-slate-100 dark:hover:bg-slate-800 whitespace-nowrap"
+                      onClick={closeDropdown}
+                    >
+                      <ClipboardList className="h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400" />
+                      <span>My Posts</span>
+                    </Link>
+
+                    <Link
+                      to="/register"
+                      className="flex h-9 items-center gap-3 rounded-md px-2.5 text-sm font-normal text-slate-950 outline-none transition hover:bg-slate-50 dark:text-slate-100 dark:hover:bg-slate-800 whitespace-nowrap"
+                      onClick={closeDropdown}
+                    >
+                      <User className="h-3.5 w-3.5 shrink-0 text-slate-500 dark:text-slate-400" />
+                      <span>Sign Up</span>
+                    </Link>
+                  </>
                 )}
-              </button>
-
-              {isDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-100 dark:border-slate-700 py-1 z-50">
-                  {isAuthenticated ? (
-                    <>
-                      {/* User info header */}
-                      <div className="px-4 py-2 border-b border-slate-100 dark:border-slate-700">
-                        <p className="text-xs text-slate-400 dark:text-slate-500">Signed in as</p>
-                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
-                          {user?.username}
-                        </p>
-                        {isAdmin && (
-                          <span className="inline-flex items-center gap-1 mt-0.5 text-xs text-indigo-600 dark:text-indigo-400 font-medium">
-                            <ShieldCheck className="w-3 h-3" />
-                            Admin
-                          </span>
-                        )}
-                      </div>
-
-                      {/* My Posts */}
-                      <Link
-                        to="/my-posts"
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                        onClick={closeDropdown}
-                      >
-                        <FileText className="w-4 h-4" />
-                        My Posts
-                      </Link>
-
-                      {/* Admin Users — visible to admin only */}
-                      {isAdmin && (
-                        <Link
-                          to="/admin/users"
-                          className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                          onClick={closeDropdown}
-                        >
-                          <ShieldCheck className="w-4 h-4" />
-                          Admin Users
-                        </Link>
-                      )}
-
-                      {/* Divider */}
-                      <div className="border-t border-slate-100 dark:border-slate-700 my-1" />
-
-                      {/* Logout */}
-                      <button
-                        onClick={handleLogout}
-                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-400/10 text-left"
-                        id="logout-button"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        Log out
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <Link
-                        to="/login"
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                        onClick={closeDropdown}
-                      >
-                        <LogIn className="w-4 h-4" />
-                        Log in
-                      </Link>
-                      <Link
-                        to="/register"
-                        className="flex items-center gap-2 px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700/50"
-                        onClick={closeDropdown}
-                      >
-                        <UserPlus className="w-4 h-4" />
-                        Sign up
-                      </Link>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
-      </Container>
+      </div>
     </header>
   );
 }
