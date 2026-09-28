@@ -5,6 +5,7 @@
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
+import quickBlogLogo from '../../components/quick-blog-logo.png';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -64,42 +65,32 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[2rem] shadow-sm p-6 sm:p-10">
-
-        {/* Logo */}
-        <div className="flex justify-center mb-10">
-          <Link to="/" className="flex flex-col items-center">
-            <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M28 16L40 24L38 28L28 22L28 16Z" fill="#e11d48"/>
-              <path d="M40 24L48 30L44 34L38 28L40 24Z" fill="#e11d48"/>
-              <path d="M28 22L36 28L32 32L24 26L28 22Z" fill="#1d4ed8"/>
-              <path d="M24 26L32 32L28 38L20 30L24 26Z" fill="#1d4ed8"/>
-              <path d="M20 30L28 38L42 38L46 34L32 32L20 30Z" fill="#1e3a8a"/>
-              <path d="M28 44L40 44L44 38L28 38L28 44Z" fill="#1e3a8a"/>
-              <path d="M20 44L28 44L28 38L16 38L20 44Z" fill="#1e3a8a"/>
-            </svg>
-          </Link>
-        </div>
+    <main className="grid min-h-screen place-items-center bg-[linear-gradient(120deg,#070724_0%,#5947f0_48%,#05c7df_100%)] px-4 py-10">
+      <form onSubmit={handleSubmit} className="w-full max-w-md rounded-lg bg-white p-8 shadow-xl" noValidate>
+        <Link to="/" className="block">
+          <img
+            alt="QuickBlog"
+            className="mx-auto mb-8 h-16 object-contain"
+            src={quickBlogLogo}
+          />
+        </Link>
 
         {/* Server / network error banner */}
         {serverError && (
-          <div className="mb-4 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400 text-sm">
+          <div className="mb-4 px-4 py-3 rounded-md bg-red-50 border border-red-200 text-red-600 text-sm font-medium">
             {serverError}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-
+        <div className="space-y-4">
           <div>
             <input
               id="login-email"
               type="email"
               placeholder="Enter your email"
               autoComplete="email"
-              className={`w-full px-4 py-3.5 rounded-xl border ${
-                fieldErrors.email ? 'border-red-500 bg-red-50 dark:bg-red-500/10' : 'border-transparent bg-[#f0f4ff] dark:bg-slate-800'
-              } text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors text-base`}
+              required
+              className="h-11 w-full rounded-md border border-slate-200 bg-white px-4 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:ring-indigo-950"
               value={formData.email}
               onChange={handleChange('email')}
               disabled={isSubmitting}
@@ -113,9 +104,8 @@ export default function LoginPage() {
               type="password"
               placeholder="Enter your password"
               autoComplete="current-password"
-              className={`w-full px-4 py-3.5 rounded-xl border ${
-                fieldErrors.password ? 'border-red-500 bg-red-50 dark:bg-red-500/10' : 'border-transparent bg-[#f0f4ff] dark:bg-slate-800'
-              } text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors text-base font-medium`}
+              required
+              className="h-11 w-full rounded-md border border-slate-200 bg-white px-4 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:ring-indigo-950"
               value={formData.password}
               onChange={handleChange('password')}
               disabled={isSubmitting}
@@ -123,33 +113,34 @@ export default function LoginPage() {
             {fieldErrors.password && <p className="text-red-500 text-xs mt-1 px-1">{fieldErrors.password}</p>}
           </div>
 
-          <div className="pt-2">
-            <button
-              id="login-submit"
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-[#5a4bfa] hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-medium py-3.5 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 flex items-center justify-center gap-2"
-            >
-              {isSubmitting ? (
-                <>
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  Logging in…
-                </>
-              ) : (
-                'Login'
-              )}
-            </button>
-          </div>
-        </form>
-
-        <div className="mt-8 text-center text-slate-500 dark:text-slate-400">
-          Don&apos;t have an account?{' '}
-          <Link to="/register" className="text-[#5a4bfa] hover:text-indigo-700 font-medium transition-colors">
-            Sign up
-          </Link>
+          <button
+            id="login-submit"
+            type="submit"
+            disabled={isSubmitting}
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:pointer-events-none disabled:opacity-60 bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 h-10 px-4 w-full"
+          >
+            {isSubmitting ? (
+              <>
+                <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Logging in…</span>
+              </>
+            ) : (
+              'Login'
+            )}
+          </button>
         </div>
 
-      </div>
-    </div>
+        <p className="mt-8 text-center text-sm text-slate-600">
+          Don&apos;t have an account?{' '}
+          <Link
+            className="font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
+            to="/signup"
+          >
+            Sign Up
+          </Link>
+        </p>
+      </form>
+    </main>
   );
 }
+
