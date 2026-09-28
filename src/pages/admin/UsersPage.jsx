@@ -5,6 +5,7 @@ import { getUsers } from '../../services/userService';
 import { useAuth } from '../../hooks/useAuth';
 import { normalizeApiError } from '../../utils/apiError';
 import Skeleton from '../../components/common/Skeleton';
+import Toast from '../../components/common/Toast';
 
 export default function UsersPage() {
   const { accessToken, logout } = useAuth();
@@ -52,14 +53,16 @@ export default function UsersPage() {
   const handleActionError = (err) => {
     const apiErr = normalizeApiError(err);
     if (apiErr.status === 401) {
-      setActionError("Error: You do not have permission to perform this action. The server returned 401 Unauthorized.");
+      setActionError("You do not have permission to perform this action.");
     } else {
-      setActionError(`Error: ${apiErr.message || 'Action failed'}`);
+      setActionError(apiErr.message || 'Action failed. Please try again.');
     }
   };
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pb-12 min-h-screen pt-12">
+      <Toast message={actionError} onClose={() => setActionError(null)} />
+      
       <h1 
         className="mb-10 flex items-center justify-center gap-3 text-[40px] font-bold text-indigo-600"
         style={{ color: 'oklch(0.511 0.262 276.966)', fontSize: '40px' }}
@@ -83,20 +86,13 @@ export default function UsersPage() {
           />
         </div>
       ) : (
-        <>
-          {actionError && (
-            <div className="mb-4 p-4 rounded-xl bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400 text-sm font-medium">
-              {actionError}
-            </div>
-          )}
-          <UserTable 
-            users={users} 
-            onChangeRoleSuccess={handleRoleChangeSuccess}
-            onDeleteSuccess={handleDeleteSuccess}
-            onChangeRoleError={handleActionError}
-            onDeleteError={handleActionError}
-          />
-        </>
+        <UserTable 
+          users={users} 
+          onChangeRoleSuccess={handleRoleChangeSuccess}
+          onDeleteSuccess={handleDeleteSuccess}
+          onChangeRoleError={handleActionError}
+          onDeleteError={handleActionError}
+        />
       )}
     </div>
   );

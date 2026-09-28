@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import PostForm from '../../components/posts/PostForm';
 import { createPost } from '../../services/postService';
 import { useAuth } from '../../hooks/useAuth';
-import ErrorState from '../../components/common/ErrorState';
+import Toast from '../../components/common/Toast';
 import { normalizeApiError } from '../../utils/apiError';
 
 export default function CreatePostPage() {
@@ -31,15 +31,11 @@ export default function CreatePostPage() {
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
+      <Toast message={error} onClose={() => setError(null)} />
+
       <h1 className="mb-10 flex items-center justify-center gap-4 text-4xl font-bold text-indigo-600 sm:text-6xl">
         Create Blog
       </h1>
-
-      {error && (
-        <div className="mb-6">
-          <ErrorState message={error} onRetry={() => setError(null)} />
-        </div>
-      )}
 
       <PostForm onSubmit={handleSubmit} isSubmitting={isSubmitting} />
     </section>

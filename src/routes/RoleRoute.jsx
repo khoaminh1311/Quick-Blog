@@ -39,9 +39,9 @@ export default function RoleRoute({ allowedRoles }) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // Authenticated but role not in the allowed list → Forbidden.
+  // Authenticated but role not in the allowed list → redirect to home.
   if (!allowedRoles.includes(user?.role)) {
-    return <Navigate to="/forbidden" replace />;
+    return <Navigate to="/" replace />;
   }
 
   return <Outlet />;
