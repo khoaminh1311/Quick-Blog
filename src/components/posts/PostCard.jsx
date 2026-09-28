@@ -1,20 +1,29 @@
 import { Link } from 'react-router-dom';
 import { stripHtmlAndTruncate } from '../../utils/postContent';
+import DeletePostButton from './DeletePostButton';
 
-export default function PostCard({ post }) {
+export default function PostCard({ post, onDeleteSuccess }) {
   // Use only the first tag for the pill, fallback to 'Blog'
   const primaryTag = post.tags && post.tags.length > 0 ? post.tags[0] : 'Blog';
 
   return (
     <article className="flex flex-col bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-sm group transition-all hover:shadow-md hover:-translate-y-1">
-      <Link to={`/posts/${post._id}`} className="block overflow-hidden aspect-[4/3]">
-        <img 
-          src={post.image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070'} 
-          alt={post.title} 
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 bg-slate-100 dark:bg-slate-800"
-          loading="lazy"
-        />
-      </Link>
+      <div className="relative aspect-[4/3] overflow-hidden">
+        <Link to={`/posts/${post._id}`} className="block w-full h-full">
+          <img 
+            src={post.image || 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=2070'} 
+            alt={post.title} 
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 bg-slate-100 dark:bg-slate-800"
+            loading="lazy"
+          />
+        </Link>
+        <div className="absolute top-3 right-3 z-10">
+          <DeletePostButton 
+            post={post} 
+            onSuccess={() => onDeleteSuccess && onDeleteSuccess(post._id)}
+          />
+        </div>
+      </div>
       <div className="flex flex-col p-5">
         <div className="mb-3">
           <span className="inline-block px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-indigo-600 dark:bg-slate-800 dark:text-indigo-400 capitalize">

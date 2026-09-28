@@ -9,6 +9,7 @@ import Skeleton from '../../components/common/Skeleton';
 import { getPostById } from '../../services/postService';
 import { useAuth } from '../../hooks/useAuth';
 import { normalizeApiError } from '../../utils/apiError';
+import DeletePostButton from '../../components/posts/DeletePostButton';
 
 export default function PostDetailPage() {
   const { postId } = useParams();
@@ -100,8 +101,11 @@ export default function PostDetailPage() {
       </Button>
 
       <article className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden mb-12">
-        <header className="p-8 md:p-10 border-b border-slate-100 dark:border-slate-800 text-center">
-          <div className="flex flex-wrap justify-center gap-2 mb-6">
+        <header className="p-8 md:p-10 border-b border-slate-100 dark:border-slate-800 text-center relative">
+          <div className="absolute top-4 right-4 sm:top-8 sm:right-8">
+            <DeletePostButton post={post} onSuccess={() => navigate('/my-posts')} />
+          </div>
+          <div className="flex flex-wrap justify-center gap-2 mb-6 mt-4">
             {post.tags.map(tag => (
               <span key={tag} className="px-3 py-1 rounded-full text-sm font-medium bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400 capitalize">
                 {tag}
