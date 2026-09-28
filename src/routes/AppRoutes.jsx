@@ -15,15 +15,15 @@ import RoleRoute from './RoleRoute';
 import GuestOnlyRoute from './GuestOnlyRoute';
 
 // ── Lazy-loaded pages ──────────────────────────────────────────────────────
-const HomePage        = lazy(() => import('../pages/posts/HomePage'));
-const PostDetailPage  = lazy(() => import('../pages/posts/PostDetailPage'));
-const CreatePostPage  = lazy(() => import('../pages/posts/CreatePostPage'));
-const MyPostsPage     = lazy(() => import('../pages/posts/MyPostsPage'));
-const UsersPage       = lazy(() => import('../pages/admin/UsersPage'));
-const LoginPage       = lazy(() => import('../pages/auth/LoginPage'));
-const RegisterPage    = lazy(() => import('../pages/auth/RegisterPage'));
-const ForbiddenPage   = lazy(() => import('../pages/ForbiddenPage'));
-const NotFoundPage    = lazy(() => import('../pages/NotFoundPage'));
+const HomePage = lazy(() => import('../pages/posts/HomePage'));
+const PostDetailPage = lazy(() => import('../pages/posts/PostDetailPage'));
+const CreatePostPage = lazy(() => import('../pages/posts/CreatePostPage'));
+const MyPostsPage = lazy(() => import('../pages/posts/MyPostsPage'));
+const UsersPage = lazy(() => import('../pages/admin/UsersPage'));
+const LoginPage = lazy(() => import('../pages/auth/LoginPage'));
+const RegisterPage = lazy(() => import('../pages/auth/RegisterPage'));
+const ForbiddenPage = lazy(() => import('../pages/ForbiddenPage'));
+const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 
 // Suspense fallback shown while a lazy chunk is being fetched.
 const PageLoadingFallback = () => (
@@ -42,27 +42,27 @@ export default function AppRoutes() {
 
         {/* ── Public-only: redirect authenticated users away ─────────────── */}
         <Route element={<GuestOnlyRoute />}>
-          <Route path="/login"    element={<LoginPage />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/signup"   element={<RegisterPage />} />
+          <Route path="/signup" element={<RegisterPage />} />
         </Route>
 
         {/* ── Public pages with Layout ──────────────────────────────────── */}
         <Route element={<AppLayout />}>
-          <Route path="/"              element={<HomePage />} />
-          <Route path="/posts/:postId" element={<PostDetailPage />} />
-          <Route path="/forbidden"     element={<ForbiddenPage />} />
+          <Route path="/forbidden" element={<ForbiddenPage />} />
 
           {/* ── Protected: any authenticated user ─────────────────────────── */}
           <Route element={<ProtectedRoute />}>
-            <Route path="/posts/new"     element={<CreatePostPage />} />
-            <Route path="/create"        element={<CreatePostPage />} />
-            <Route path="/my-posts"      element={<MyPostsPage />} />
-            <Route path="/mypost"        element={<MyPostsPage />} />
+            <Route path="/" element={<HomePage />} />
+            <Route path="/posts/:postId" element={<PostDetailPage />} />
+            <Route path="/posts/new" element={<CreatePostPage />} />
+            <Route path="/create" element={<CreatePostPage />} />
+            <Route path="/my-posts" element={<MyPostsPage />} />
+            <Route path="/mypost" element={<MyPostsPage />} />
 
             {/* ── Role-protected: admin only ───────────────────────────── */}
             <Route element={<RoleRoute allowedRoles={['admin']} />}>
-              <Route path="/admin/users"     element={<UsersPage />} />
+              <Route path="/admin/users" element={<UsersPage />} />
               <Route path="/user-management" element={<UsersPage />} />
             </Route>
           </Route>

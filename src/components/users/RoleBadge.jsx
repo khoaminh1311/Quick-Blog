@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+
 
 export default function RoleBadge({ role }) {
   const isAdmin = role === 'admin';
@@ -15,6 +15,3 @@ export default function RoleBadge({ role }) {
   );
 }
 
-RoleBadge.propTypes = {
-  role: PropTypes.string.isRequired,
-};

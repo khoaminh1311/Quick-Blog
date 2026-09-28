@@ -1,4 +1,4 @@
-import PropTypes from 'prop-types';
+
 import RoleBadge from './RoleBadge';
 import ChangeRoleButton from './ChangeRoleButton';
 import DeleteUserButton from './DeleteUserButton';
@@ -67,17 +67,4 @@ export default function UserTable({ users, onChangeRoleSuccess, onDeleteSuccess,
   );
 }
 
-UserTable.propTypes = {
-  users: PropTypes.arrayOf(
-    PropTypes.shape({
-      _id: PropTypes.string.isRequired,
-      username: PropTypes.string.isRequired,
-      email: PropTypes.string.isRequired,
-      role: PropTypes.string.isRequired,
-    })
-  ).isRequired,
-  onChangeRoleSuccess: PropTypes.func,
-  onDeleteSuccess: PropTypes.func,
-  onChangeRoleError: PropTypes.func,
-  onDeleteError: PropTypes.func,
-};
+

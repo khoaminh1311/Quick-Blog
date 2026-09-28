@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import PropTypes from 'prop-types';
+
 import { Trash2, Loader2 } from 'lucide-react';
 import ConfirmDialog from '../common/ConfirmDialog';
 import { deleteUser } from '../../services/userService';
@@ -48,11 +48,3 @@ export default function DeleteUserButton({ user, onSuccess, onError }) {
   );
 }
 
-DeleteUserButton.propTypes = {
-  user: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    username: PropTypes.string.isRequired,
-  }).isRequired,
-  onSuccess: PropTypes.func,
-  onError: PropTypes.func,
-};

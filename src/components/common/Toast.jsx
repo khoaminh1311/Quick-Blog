@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import PropTypes from 'prop-types';
+
 import { X, Check } from 'lucide-react';
 
 export default function Toast({ message, onClose, duration = 4000, type = 'error' }) {
@@ -35,9 +35,3 @@ export default function Toast({ message, onClose, duration = 4000, type = 'error
   );
 }
 
-Toast.propTypes = {
-  message: PropTypes.string,
-  onClose: PropTypes.func,
-  duration: PropTypes.number,
-  type: PropTypes.oneOf(['error', 'success', 'info']),
-};

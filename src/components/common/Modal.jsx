@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import PropTypes from 'prop-types';
+
 import { X } from 'lucide-react';
 import { createPortal } from 'react-dom';
 
@@ -75,10 +75,3 @@ export default function Modal({ isOpen, onClose, title, description, children })
   return createPortal(modalContent, document.body);
 }
 
-Modal.propTypes = {
-  isOpen: PropTypes.bool.isRequired,
-  onClose: PropTypes.func.isRequired,
-  title: PropTypes.string,
-  description: PropTypes.node,
-  children: PropTypes.node,
-};

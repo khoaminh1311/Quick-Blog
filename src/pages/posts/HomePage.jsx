@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import ErrorState from '../../components/common/ErrorState';
 import EmptyState from '../../components/common/EmptyState';
 import PostCard from '../../components/posts/PostCard';
@@ -40,19 +40,23 @@ export default function HomePage() {
     }
   };
 
-  // Fetch whenever debounced search changes
+  // Fetch only ONCE on mount
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchPosts();
-  }, [debouncedSearch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleRetry = () => {
     fetchPosts();
   };
 
-  const filteredPosts = posts.filter(post => 
-    !debouncedSearch || 
-    post.title?.toLowerCase().includes(debouncedSearch.toLowerCase())
+  const filteredPosts = useMemo(() => 
+    posts.filter(post => 
+      !debouncedSearch || 
+      post.title?.toLowerCase().includes(debouncedSearch.toLowerCase())
+    ),
+    [posts, debouncedSearch]
   );
 
   return (

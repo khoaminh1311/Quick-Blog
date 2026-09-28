@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import ErrorState from '../../components/common/ErrorState';
 import Skeleton from '../../components/common/Skeleton';
@@ -22,12 +22,7 @@ export default function MyPostsPage() {
     try {
       const response = await getPostsByUser(currentUser.id, accessToken);
       const allItems = response.items || [];
-      // Fallback: client-side filter in case backend doesn't filter by userId query parameter
-      const myPosts = allItems.filter(post => {
-        const authorId = typeof post.author === 'string' ? post.author : post.author?._id;
-        return authorId === currentUser.id;
-      });
-      setPosts(myPosts);
+      setPosts(allItems);
     } catch (err) {
       const apiErr = normalizeApiError(err);
       if (apiErr.status === 401) {
@@ -41,12 +36,21 @@ export default function MyPostsPage() {
   };
 
   useEffect(() => {
-    fetchMyPosts(); // eslint-disable-line react-hooks/set-state-in-effect
-  }, [currentUser?.id]); // eslint-disable-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    fetchMyPosts();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser?.id]);
 
   const handleRetry = () => {
     fetchMyPosts();
   };
+
+  const filteredPosts = useMemo(() => {
+    return posts.filter(post => {
+      const authorId = typeof post.author === 'string' ? post.author : post.author?._id;
+      return authorId === currentUser?.id;
+    });
+  }, [posts, currentUser?.id]);
 
   const handleDeleteSuccess = (deletedId) => {
     setPosts(prev => prev.filter(post => post._id !== deletedId));
@@ -94,14 +98,14 @@ export default function MyPostsPage() {
                 </tr>
               </thead>
               <tbody>
-                {posts.length === 0 ? (
+                {filteredPosts.length === 0 ? (
                   <tr>
                     <td colSpan="3" className="border-b border-slate-100 px-4 py-12 text-center text-slate-500 dark:border-slate-800 dark:text-slate-400">
                       You haven't created any posts yet.
                     </td>
                   </tr>
                 ) : (
-                  posts.map((post) => (
+                  filteredPosts.map((post) => (
                     <tr key={post._id}>
                       <td className="border-b border-slate-100 px-4 py-4 align-top dark:border-slate-800 font-semibold">
                         {post.title}

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import PropTypes from 'prop-types';
+
 import { KeyRound, User as UserIcon, Shield, Check, ChevronDown, Loader2 } from 'lucide-react';
 import Modal from '../common/Modal';
 import { updateUserRole } from '../../services/userService';
@@ -143,12 +143,3 @@ export default function ChangeRoleButton({ user, onSuccess, onError }) {
   );
 }
 
-ChangeRoleButton.propTypes = {
-  user: PropTypes.shape({
-    _id: PropTypes.string.isRequired,
-    username: PropTypes.string.isRequired,
-    role: PropTypes.string.isRequired,
-  }).isRequired,
-  onSuccess: PropTypes.func,
-  onError: PropTypes.func,
-};
