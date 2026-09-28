@@ -56,16 +56,20 @@ export default function DeletePostButton({ post, onSuccess, variant = 'icon', cl
           setError(null);
         }}
         className={
-          variant === 'solid'
+          variant === 'table'
+            ? `inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:pointer-events-none disabled:opacity-60 h-9 w-11 rounded-[10px] bg-red-500 text-white shadow-none hover:bg-red-600 ${className}`
+            : variant === 'solid'
             ? `flex items-center justify-center w-10 h-10 rounded-md bg-red-500 hover:bg-red-600 text-white transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 ${className}`
             : variant === 'ellipsis'
             ? `absolute right-0 top-0 z-10 grid h-10 w-10 place-items-center rounded-full border border-white/60 bg-white/55 text-blue-500/70 opacity-0 shadow-sm shadow-slate-900/10 backdrop-blur-md transition duration-200 hover:bg-white/75 hover:text-blue-600/85 hover:opacity-95 group-hover/actions:translate-y-11 group-hover/actions:opacity-80 group-focus-within/actions:translate-y-11 group-focus-within/actions:opacity-80 ${className}`
             : `flex items-center justify-center p-2 rounded-full bg-white/90 hover:bg-red-50 text-slate-400 hover:text-red-500 transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 dark:bg-slate-800/90 dark:hover:bg-red-500/20 dark:hover:text-red-400 ${className}`
         }
-        title={variant === 'ellipsis' ? `Open actions for ${post.title}` : "Delete Post"}
-        aria-label={variant === 'ellipsis' ? `Open actions for ${post.title}` : "Delete Post"}
+        title={variant === 'ellipsis' ? `Open actions for ${post.title}` : `Delete ${post.title}`}
+        aria-label={variant === 'ellipsis' ? `Open actions for ${post.title}` : `Delete ${post.title}`}
       >
-        {variant === 'solid' ? (
+        {variant === 'table' ? (
+          <Trash2 className="lucide-trash-2 h-5 w-5 stroke-[2.5]" aria-hidden="true" />
+        ) : variant === 'solid' ? (
           <Trash2 className="w-5 h-5" />
         ) : variant === 'ellipsis' ? (
           <MoreHorizontal className="h-6 w-6 stroke-[1.9]" />

@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Eye } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import Container from '../../components/common/Container';
 import ErrorState from '../../components/common/ErrorState';
+import Skeleton from '../../components/common/Skeleton';
 import { getPostsByUser } from '../../services/postService';
 import { useAuth } from '../../hooks/useAuth';
 import { normalizeApiError } from '../../utils/apiError';
@@ -54,76 +53,107 @@ export default function MyPostsPage() {
   };
 
   return (
-    <Container className="max-w-5xl pb-12">
-      <div className="flex justify-center items-center mb-10 pt-6">
-        <h1 className="text-4xl font-bold text-indigo-600 dark:text-indigo-500 flex items-center gap-3">
-          <span>✍️</span> My Posts
-        </h1>
-      </div>
+    <section className="mx-auto min-h-[calc(100vh-24rem)] max-w-7xl px-4 py-12 sm:px-6">
+      <h1 className="mb-14 flex items-center justify-center gap-4 text-4xl font-bold text-indigo-600 sm:text-5xl">
+        <span aria-hidden="true" className="text-5xl leading-none">
+          ✍️
+        </span>
+        My Post
+      </h1>
 
-      <div className="pb-16">
+      <div className="min-h-[420px]">
         {isLoading ? (
-          <div className="text-center text-slate-500">Loading your posts...</div>
+          <div className="space-y-4">
+            <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+            <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+            <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+            <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+          </div>
         ) : error ? (
-          <ErrorState
-            title="Failed to load posts"
-            message={error}
-            onRetry={handleRetry}
-          />
+          <div className="flex items-center justify-center min-h-[300px]">
+            <ErrorState
+              title="Failed to load posts"
+              message={error}
+              onRetry={handleRetry}
+            />
+          </div>
         ) : (
-          <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
-                    <th className="px-4 py-3 sm:px-6 sm:py-4 w-1/3">TITLE</th>
-                    <th className="px-4 py-3 sm:px-6 sm:py-4 w-1/2">CONTENT</th>
-                    <th className="px-4 py-3 sm:px-6 sm:py-4 w-1/6 text-right">ACTION</th>
+          <div className="w-full overflow-x-auto">
+            <table className="w-full min-w-[680px] text-left text-sm">
+              <thead>
+                <tr>
+                  <th className="border-b border-slate-200 px-4 py-4 font-bold uppercase tracking-wide dark:border-slate-800 text-base text-slate-950 dark:text-slate-100">
+                    Title
+                  </th>
+                  <th className="border-b border-slate-200 px-4 py-4 font-bold uppercase tracking-wide dark:border-slate-800 text-base text-slate-950 dark:text-slate-100">
+                    Content
+                  </th>
+                  <th className="border-b border-slate-200 px-4 py-4 font-bold uppercase tracking-wide dark:border-slate-800 w-36 text-base text-slate-950 dark:text-slate-100">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {posts.length === 0 ? (
+                  <tr>
+                    <td colSpan="3" className="border-b border-slate-100 px-4 py-12 text-center text-slate-500 dark:border-slate-800 dark:text-slate-400">
+                      You haven't created any posts yet.
+                    </td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
-                  {posts.length === 0 ? (
-                    <tr>
-                      <td colSpan="3" className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
-                        You haven't created any posts yet.
+                ) : (
+                  posts.map((post) => (
+                    <tr key={post._id}>
+                      <td className="border-b border-slate-100 px-4 py-4 align-top dark:border-slate-800 font-semibold">
+                        {post.title}
+                      </td>
+                      <td className="border-b border-slate-100 px-4 py-4 align-top dark:border-slate-800">
+                        {stripHtmlAndTruncate(post.content, 100)}
+                      </td>
+                      <td className="border-b border-slate-100 px-4 py-4 align-top dark:border-slate-800">
+                        <div className="flex items-center gap-3">
+                          <Link
+                            aria-label={`View ${post.title}`}
+                            title={`View ${post.title}`}
+                            className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:pointer-events-none disabled:opacity-60 h-9 w-11 rounded-[10px] bg-blue-500 text-white shadow-none hover:bg-blue-600"
+                            to={`/posts/${post._id}`}
+                            data-discover="true"
+                          >
+                            <svg
+                              className="h-5 w-5"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              aria-hidden="true"
+                            >
+                              <path d="M7 6v11" />
+                              <path d="M17 6v11" />
+                              <path d="M7 8h10" />
+                              <path d="M7 13h10" />
+                              <path d="M5 10.5 3.5 16.5a3 3 0 0 0 5.8 1.5l1.2-4.5" />
+                              <path d="M19 10.5 20.5 16.5a3 3 0 0 1-5.8 1.5l-1.2-4.5" />
+                              <path d="M9 6a2 2 0 0 1 4 0" />
+                              <path d="M15 6a2 2 0 0 0-4 0" />
+                            </svg>
+                          </Link>
+                          <DeletePostButton
+                            post={post}
+                            onSuccess={() => handleDeleteSuccess(post._id)}
+                            variant="table"
+                          />
+                        </div>
                       </td>
                     </tr>
-                  ) : (
-                    posts.map(post => (
-                      <tr key={post._id} className="hover:bg-slate-50 dark:hover:bg-slate-800/25 transition-colors">
-                        <td className="px-4 py-3 sm:px-6 sm:py-4">
-                          <p className="font-bold text-slate-900 dark:text-slate-100">{post.title}</p>
-                        </td>
-                        <td className="px-4 py-3 sm:px-6 sm:py-4">
-                          <p className="text-slate-500 dark:text-slate-400 truncate max-w-md">
-                            {stripHtmlAndTruncate(post.content, 100)}
-                          </p>
-                        </td>
-                        <td className="px-4 py-3 sm:px-6 sm:py-4">
-                          <div className="flex items-center justify-end gap-3">
-                            <Link 
-                              to={`/posts/${post._id}`}
-                              className="flex items-center justify-center w-10 h-10 rounded-md bg-blue-500 hover:bg-blue-600 text-white transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-                              title="View Post"
-                            >
-                              <Eye className="w-5 h-5" />
-                            </Link>
-                            <DeletePostButton 
-                              post={post} 
-                              onSuccess={() => handleDeleteSuccess(post._id)} 
-                              variant="solid" 
-                            />
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
-    </Container>
+    </section>
   );
 }
