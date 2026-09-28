@@ -1,6 +1,4 @@
 import { useState, useEffect } from 'react';
-import Container from '../../components/common/Container';
-import Button from '../../components/common/Button';
 import ErrorState from '../../components/common/ErrorState';
 import EmptyState from '../../components/common/EmptyState';
 import PostCard from '../../components/posts/PostCard';
@@ -21,30 +19,15 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm, 500);
 
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(false);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-
-  const fetchPosts = async (searchQuery, pageNum, isLoadMore = false) => {
-    if (!isLoadMore) {
-      setIsLoading(true);
-    } else {
-      setIsLoadingMore(true);
-    }
+  const fetchPosts = async () => {
+    setIsLoading(true);
     setError(null);
 
     try {
       // Real API returns { items: [], page, limit, total, totalPages }
       const response = await getPosts(accessToken);
       const items = response.items ?? [];
-      if (isLoadMore) {
-        setPosts(prev => [...prev, ...items]);
-      } else {
-        setPosts(items);
-        setPage(pageNum);
-      }
-      // hasMore: there are more pages beyond the current one
-      setHasMore(response.page < response.totalPages);
+      setPosts(items);
     } catch (error) {
       const apiErr = normalizeApiError(error);
       if (apiErr.status === 401) {
@@ -54,45 +37,44 @@ export default function HomePage() {
       }
     } finally {
       setIsLoading(false);
-      setIsLoadingMore(false);
     }
   };
 
-  // Fetch from page 1 whenever debounced search changes
+  // Fetch whenever debounced search changes
   useEffect(() => {
-    fetchPosts(debouncedSearch, 1); // eslint-disable-line react-hooks/set-state-in-effect
+    // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
+    fetchPosts();
   }, [debouncedSearch]);
 
-  const handleLoadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchPosts(debouncedSearch, nextPage, true);
+  const handleRetry = () => {
+    fetchPosts();
   };
 
-  const handleRetry = () => {
-    fetchPosts(debouncedSearch, page);
-  };
+  const filteredPosts = posts.filter(post => 
+    !debouncedSearch || 
+    post.title?.toLowerCase().includes(debouncedSearch.toLowerCase())
+  );
 
   return (
-    <Container>
-      <div className="pt-8 sm:pt-12 pb-20 flex flex-col items-center text-center">
-        <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-slate-900 dark:text-white mb-6 tracking-tight">
-          Your own <span className="text-indigo-600 dark:text-indigo-500">blogging</span> platform.
+    <section className="mx-auto max-w-7xl px-5 pb-8 pt-9 sm:px-6 sm:pb-10 lg:pt-10">
+      <div className="mx-auto max-w-3xl text-center">
+        <h1 className="mx-auto max-w-sm text-3xl font-bold leading-tight tracking-normal text-slate-700 dark:text-white sm:max-w-3xl sm:text-6xl">
+          Your own <span className="text-indigo-600">blogging</span> platform.
         </h1>
 
-        <p className="max-w-2xl text-lg text-slate-600 dark:text-slate-400 mb-12 leading-relaxed">
-          This is your space to think out loud, to share what matters, and to write without filters. Whether it's one word or a thousand, your story starts right here.
+        <p className="mx-auto mt-5 max-w-sm text-xs leading-5 text-slate-500 dark:text-slate-300 sm:max-w-3xl sm:text-base sm:leading-7">
+          This is your space to think out loud, to share what matters, and to
+          write without filters. Whether it's one word or a thousand, your
+          story starts right here.
         </p>
 
-        <div className="w-full">
-          <SearchBar
-            value={searchTerm}
-            onChange={setSearchTerm}
-          />
-        </div>
+        <SearchBar
+          value={searchTerm}
+          onChange={setSearchTerm}
+        />
       </div>
 
-      <div className="pb-24">
+      <div>
         {isLoading ? (
           <PostListSkeleton count={8} />
         ) : error ? (
@@ -101,7 +83,7 @@ export default function HomePage() {
             message={error}
             onRetry={handleRetry}
           />
-        ) : posts.length === 0 ? (
+        ) : filteredPosts.length === 0 ? (
           <EmptyState
             title="No posts found"
             message={debouncedSearch ? "Try adjusting your search query." : "There are no posts available right now."}
@@ -111,35 +93,17 @@ export default function HomePage() {
         ) : (
           <>
             <PostGrid>
-              {posts
-                .filter(post => 
-                  !debouncedSearch || 
-                  post.title?.toLowerCase().includes(debouncedSearch.toLowerCase())
-                )
-                .map(post => (
-                  <PostCard 
-                    key={post._id} 
-                    post={post} 
-                    onDeleteSuccess={(deletedId) => setPosts(prev => prev.filter(p => p._id !== deletedId))}
-                  />
-                ))}
+              {filteredPosts.map(post => (
+                <PostCard 
+                  key={post._id} 
+                  post={post} 
+                  onDeleteSuccess={(deletedId) => setPosts(prev => prev.filter(p => p._id !== deletedId))}
+                />
+              ))}
             </PostGrid>
-
-            {hasMore && (
-              <div className="mt-16 flex justify-center">
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  onClick={handleLoadMore}
-                  isLoading={isLoadingMore}
-                >
-                  Load More
-                </Button>
-              </div>
-            )}
           </>
         )}
       </div>
-    </Container>
+    </section>
   );
 }

@@ -1,26 +1,23 @@
-import { Search } from 'lucide-react';
-
-export default function SearchBar({ value, onChange, placeholder = 'Search for blogs' }) {
+export default function SearchBar({ value, onChange, placeholder = 'Enter search title...' }) {
   return (
-    <div className="relative w-full max-w-xl mx-auto">
-      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-        <Search className="h-5 w-5 text-slate-400" />
-      </div>
+    <form 
+      onSubmit={(e) => e.preventDefault()}
+      className="mx-auto mt-7 flex max-w-[17.5rem] overflow-hidden rounded-sm border border-slate-300 bg-white p-1 shadow-sm dark:border-slate-700 dark:bg-slate-950 sm:max-w-2xl sm:rounded-md"
+    >
       <input
         type="text"
-        className="block w-full pl-12 pr-20 sm:pr-28 py-3.5 border border-slate-200 dark:border-slate-800 rounded-full leading-5 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors sm:text-base shadow-sm"
+        className="w-full rounded-md border-slate-200 bg-white text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:ring-indigo-950 h-9 min-w-0 border-0 px-3 text-base shadow-none focus:border-0 focus:ring-0 sm:h-12 sm:px-4 sm:text-sm"
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
-      <div className="absolute inset-y-0 right-1.5 flex items-center">
-        <button 
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-1.5 sm:px-5 sm:py-2 rounded-full text-xs sm:text-sm font-medium transition-colors"
-          onClick={() => {}}
-        >
-          Search
-        </button>
-      </div>
-    </div>
+      <button 
+        type="submit"
+        className="inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:pointer-events-none disabled:opacity-60 bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 h-8 min-w-[4.25rem] shrink-0 rounded-sm px-3 text-[10px] sm:h-12 sm:min-w-[8rem] sm:rounded-md sm:text-base"
+      >
+        Search
+      </button>
+    </form>
   );
 }
+

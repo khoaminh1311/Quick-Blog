@@ -27,17 +27,18 @@ export default function DeleteUserButton({ user, onSuccess, onError }) {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="inline-flex items-center justify-center p-1.5 rounded-lg bg-red-500 hover:bg-red-600 text-white transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-        title="Delete User"
+        className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:pointer-events-none disabled:opacity-60 h-9 w-11 rounded-[10px] bg-red-500 text-white shadow-none hover:bg-red-600"
+        aria-label={`Delete ${user.username}`}
+        title={`Delete ${user.username}`}
       >
-        <Trash2 className="w-4 h-4" />
+        <Trash2 className="lucide-trash-2 h-5 w-5 stroke-[2.5]" />
       </button>
 
       <ConfirmDialog
         isOpen={isOpen}
         onClose={() => !isDeleting && setIsOpen(false)}
         title="Delete this user?"
-        message="This user account will be permanently removed."
+        message="This user account and all their posts will be permanently removed."
         confirmText={isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete'}
         cancelText="Cancel"
         onConfirm={handleConfirm}

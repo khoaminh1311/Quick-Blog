@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { X } from 'lucide-react';
-import Button from '../common/Button';
+import { X, Loader2 } from 'lucide-react';
 import ImageUpload from './ImageUpload';
 import RichTextEditor from './RichTextEditor';
 import { stripHtmlAndTruncate } from '../../utils/postContent';
@@ -67,57 +66,51 @@ export default function PostForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} className="space-y-7">
       {/* Blog Image */}
-      <div className="space-y-2">
-        <label className="block text-sm font-semibold text-slate-900 dark:text-slate-100">
-          Blog Cover Image
-        </label>
-        <ImageUpload 
-          value={image} 
-          onChange={setImage} 
-          disabled={isSubmitting} 
-        />
-      </div>
+      <label className="block">
+        <span className="mb-3 block font-semibold text-slate-900 dark:text-slate-100">Blog Image</span>
+        <div>
+          <ImageUpload 
+            value={image} 
+            onChange={setImage} 
+            disabled={isSubmitting} 
+          />
+        </div>
+      </label>
 
       {/* Blog Title */}
-      <div className="space-y-2">
-        <label htmlFor="title" className="block text-sm font-semibold text-slate-900 dark:text-slate-100">
-          Blog Title
-        </label>
+      <label className="block">
+        <span className="mb-3 block font-semibold text-slate-900 dark:text-slate-100">Blog Title</span>
         <input
-          id="title"
           type="text"
-          className="w-full px-4 py-2.5 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+          className="h-11 w-full rounded-md border border-slate-200 bg-white px-4 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:ring-indigo-950"
           placeholder="Enter blog title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           disabled={isSubmitting}
         />
-      </div>
+      </label>
 
       {/* Blog Content */}
-      <div className="space-y-2">
-        <label className="block text-sm font-semibold text-slate-900 dark:text-slate-100">
-          Blog Content
-        </label>
-        <RichTextEditor 
-          value={content} 
-          onChange={setContent} 
-          disabled={isSubmitting} 
-        />
-      </div>
+      <label className="block">
+        <span className="mb-3 block font-semibold text-slate-900 dark:text-slate-100">Blog Content</span>
+        <div className="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700">
+          <RichTextEditor 
+            value={content} 
+            onChange={setContent} 
+            disabled={isSubmitting} 
+          />
+        </div>
+      </label>
 
       {/* Blog Tag */}
-      <div className="space-y-3">
-        <label htmlFor="tag" className="block text-sm font-semibold text-slate-900 dark:text-slate-100">
-          Blog Tag
-        </label>
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+      <label className="block">
+        <span className="mb-3 block font-semibold text-slate-900 dark:text-slate-100">Blog Tag</span>
+        <div className="flex gap-2">
           <input
-            id="tag"
             type="text"
-            className="flex-grow px-4 py-2.5 rounded-md border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+            className="h-11 w-full rounded-md border border-slate-200 bg-white px-4 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:ring-indigo-950"
             placeholder="Enter blog tag"
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
@@ -133,32 +126,31 @@ export default function PostForm({
             type="button"
             onClick={handleAddTag}
             disabled={isSubmitting}
-            className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-6 py-2.5 rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 flex-shrink-0 shadow-sm"
+            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:pointer-events-none disabled:opacity-60 bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 h-10 px-4 py-0 shrink-0"
           >
             Add Tag
           </button>
         </div>
         
         {/* Display added tags */}
-        {tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 pt-2">
-            {tags.map(tag => (
-              <span key={tag} className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-sm font-medium">
-                {tag}
-                {!isSubmitting && (
-                  <button 
-                    type="button" 
-                    onClick={() => handleRemoveTag(tag)}
-                    className="hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors focus:outline-none"
-                  >
-                    <X className="w-3 h-3" />
-                  </button>
-                )}
-              </span>
-            ))}
-          </div>
-        )}
-      </div>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {tags.map(tag => (
+            <span key={tag} className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 text-xs font-semibold">
+              <span>{tag}</span>
+              {!isSubmitting && (
+                <button 
+                  type="button" 
+                  onClick={() => handleRemoveTag(tag)}
+                  className="hover:text-indigo-800 dark:hover:text-indigo-300 transition-colors focus:outline-none"
+                  aria-label={`Remove tag ${tag}`}
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </span>
+          ))}
+        </div>
+      </label>
 
       {error && (
         <div className="p-3 rounded-md bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/20 text-red-600 dark:text-red-400 text-sm font-medium">
@@ -167,17 +159,22 @@ export default function PostForm({
       )}
 
       {/* Submit Button */}
-      <div className="pt-6 flex justify-center">
-        <Button
+      <div className="flex justify-center">
+        <button
           type="submit"
-          className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 text-lg font-medium rounded-md w-full sm:w-auto shadow-sm"
-          isLoading={isSubmitting}
+          className="inline-flex items-center justify-center gap-2 whitespace-nowrap font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:pointer-events-none disabled:opacity-60 bg-indigo-600 text-white shadow-sm hover:bg-indigo-700 h-9 rounded-md px-4 py-0 text-sm"
           disabled={isSubmitting}
         >
-          Create Blog
-        </Button>
+          {isSubmitting ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Creating...</span>
+            </>
+          ) : (
+            'Create Blog'
+          )}
+        </button>
       </div>
-
     </form>
   );
 }

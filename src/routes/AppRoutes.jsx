@@ -44,6 +44,7 @@ export default function AppRoutes() {
         <Route element={<GuestOnlyRoute />}>
           <Route path="/login"    element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/signup"   element={<RegisterPage />} />
         </Route>
 
         {/* ── Public pages with Layout ──────────────────────────────────── */}
@@ -55,11 +56,14 @@ export default function AppRoutes() {
           {/* ── Protected: any authenticated user ─────────────────────────── */}
           <Route element={<ProtectedRoute />}>
             <Route path="/posts/new"     element={<CreatePostPage />} />
+            <Route path="/create"        element={<CreatePostPage />} />
             <Route path="/my-posts"      element={<MyPostsPage />} />
+            <Route path="/mypost"        element={<MyPostsPage />} />
 
             {/* ── Role-protected: admin only ───────────────────────────── */}
             <Route element={<RoleRoute allowedRoles={['admin']} />}>
-              <Route path="/admin/users" element={<UsersPage />} />
+              <Route path="/admin/users"     element={<UsersPage />} />
+              <Route path="/user-management" element={<UsersPage />} />
             </Route>
           </Route>
         </Route>

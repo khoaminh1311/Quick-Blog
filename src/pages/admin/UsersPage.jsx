@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
-import { Puzzle } from 'lucide-react';
-import Container from '../../components/common/Container';
 import ErrorState from '../../components/common/ErrorState';
 import UserTable from '../../components/users/UserTable';
 import { getUsers } from '../../services/userService';
 import { useAuth } from '../../hooks/useAuth';
 import { normalizeApiError } from '../../utils/apiError';
+import Skeleton from '../../components/common/Skeleton';
 
 export default function UsersPage() {
   const { accessToken, logout } = useAuth();
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [actionError, setActionError] = useState(null);
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -21,7 +21,7 @@ export default function UsersPage() {
       setUsers(response.items || []);
     } catch (err) {
       const apiErr = normalizeApiError(err);
-      if (apiErr.status === 401 || apiErr.status === 403) {
+      if (apiErr.status === 401) {
         logout();
       } else {
         setError(apiErr.message || 'Failed to load users');
@@ -40,45 +40,55 @@ export default function UsersPage() {
   };
 
   const handleRoleChangeSuccess = (userId, newRole) => {
+    setActionError(null);
     setUsers(prev => prev.map(u => u._id === userId ? { ...u, role: newRole } : u));
   };
 
   const handleDeleteSuccess = (userId) => {
+    setActionError(null);
     setUsers(prev => prev.filter(u => u._id !== userId));
   };
 
   const handleActionError = (err) => {
     const apiErr = normalizeApiError(err);
     if (apiErr.status === 401) {
-      alert("Error: You do not have permission to perform this action. The server returned 401 Unauthorized.");
+      setActionError("Error: You do not have permission to perform this action. The server returned 401 Unauthorized.");
     } else {
-      alert(`Error: ${apiErr.message || 'Action failed'}`);
+      setActionError(`Error: ${apiErr.message || 'Action failed'}`);
     }
   };
 
   return (
-    <Container className="max-w-6xl pb-12 bg-slate-50/50 dark:bg-slate-900 min-h-screen pt-12">
-      <div className="flex flex-col items-center mb-8">
-        <div className="flex items-center gap-3">
-          <Puzzle className="w-10 h-10 text-emerald-400 fill-emerald-400 rotate-[-15deg]" />
-          <h1 className="text-[40px] font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500 tracking-tight">
-            User Management
-          </h1>
-        </div>
-      </div>
+    <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pb-12 min-h-screen pt-12">
+      <h1 
+        className="mb-10 flex items-center justify-center gap-3 text-[40px] font-bold text-indigo-600"
+        style={{ color: 'oklch(0.511 0.262 276.966)', fontSize: '40px' }}
+      >
+        <span aria-hidden="true">🧩</span> User Management
+      </h1>
 
-      <div className="pb-16 bg-slate-50 dark:bg-slate-900 rounded-3xl p-2 sm:p-4">
-        {isLoading ? (
-          <div className="text-center text-slate-500 dark:text-slate-400 py-24">
-            Loading users...
-          </div>
-        ) : error ? (
+      {isLoading ? (
+        <div className="min-h-[420px] rounded-lg bg-slate-50 p-6 dark:bg-slate-900 space-y-4">
+          <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+          <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+          <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+          <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+        </div>
+      ) : error ? (
+        <div className="min-h-[420px] rounded-lg bg-slate-50 p-6 dark:bg-slate-900 flex items-center justify-center">
           <ErrorState
             title="Failed to load users"
             message={error}
             onRetry={handleRetry}
           />
-        ) : (
+        </div>
+      ) : (
+        <>
+          {actionError && (
+            <div className="mb-4 p-4 rounded-xl bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400 text-sm font-medium">
+              {actionError}
+            </div>
+          )}
           <UserTable 
             users={users} 
             onChangeRoleSuccess={handleRoleChangeSuccess}
@@ -86,8 +96,8 @@ export default function UsersPage() {
             onChangeRoleError={handleActionError}
             onDeleteError={handleActionError}
           />
-        )}
-      </div>
-    </Container>
+        </>
+      )}
+    </div>
   );
 }

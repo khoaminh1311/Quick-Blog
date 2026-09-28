@@ -24,6 +24,9 @@ const apiClient = axios.create({
  * @returns {{ headers: { Authorization: string } }}
  */
 export function authHeader(accessToken) {
+  if (!accessToken) {
+    return {};
+  }
   return {
     headers: {
       Authorization: `Bearer ${accessToken}`,
