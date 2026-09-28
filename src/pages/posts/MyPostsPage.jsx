@@ -20,8 +20,20 @@ export default function MyPostsPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await getPostsByUser(currentUser.id, accessToken);
-      const allItems = response.items || [];
+      const firstResponse = await getPostsByUser(currentUser.id, accessToken, 1);
+      let allItems = [...(firstResponse.items || [])];
+      const totalPages = firstResponse.totalPages || 1;
+
+      if (totalPages > 1) {
+        const promises = [];
+        for (let i = 2; i <= totalPages; i++) {
+          promises.push(getPostsByUser(currentUser.id, accessToken, i));
+        }
+        const remainingResponses = await Promise.all(promises);
+        remainingResponses.forEach(res => {
+          allItems = [...allItems, ...(res.items || [])];
+        });
+      }
 
       // Client-side filter: backend may return all posts if userId param
       // is not supported. We filter by matching author._id or author string.

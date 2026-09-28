@@ -14,10 +14,10 @@ import apiClient, { authHeader } from './apiClient';
  * @param {string} accessToken
  * @returns {Promise<{ items: object[], page: number, limit: number, total: number, totalPages: number }>}
  */
-export async function getUsers(accessToken) {
+export async function getUsers(accessToken, page = 1) {
   const response = await apiClient.get('/api/users', {
     ...authHeader(accessToken),
-    params: { limit: 1000 },
+    params: { page },
   });
   return response.data;
 }

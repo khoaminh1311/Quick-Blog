@@ -16,10 +16,10 @@ import apiClient, { authHeader } from './apiClient';
  * @param {string} accessToken
  * @returns {Promise<{ items: object[], page: number, limit: number, total: number, totalPages: number }>}
  */
-export async function getPosts(accessToken) {
+export async function getPosts(accessToken, page = 1) {
   const response = await apiClient.get('/api/posts', {
     ...authHeader(accessToken),
-    params: { limit: 1000 },
+    params: { page },
   });
   return response.data;
 }
@@ -35,10 +35,10 @@ export async function getPosts(accessToken) {
  * @param {string} accessToken
  * @returns {Promise<{ items: object[], page: number, limit: number, total: number, totalPages: number }>}
  */
-export async function getPostsByUser(userId, accessToken) {
+export async function getPostsByUser(userId, accessToken, page = 1) {
   const response = await apiClient.get('/api/posts', {
     ...authHeader(accessToken),
-    params: { userId, limit: 1000 },
+    params: { userId, page },
   });
   return response.data;
 }

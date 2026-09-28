@@ -24,10 +24,22 @@ export default function HomePage() {
     setError(null);
 
     try {
-      // Real API returns { items: [], page, limit, total, totalPages }
-      const response = await getPosts(accessToken);
-      const items = response.items ?? [];
-      setPosts(items);
+      const firstResponse = await getPosts(accessToken, 1);
+      let allItems = [...(firstResponse.items || [])];
+      const totalPages = firstResponse.totalPages || 1;
+
+      if (totalPages > 1) {
+        const promises = [];
+        for (let i = 2; i <= totalPages; i++) {
+          promises.push(getPosts(accessToken, i));
+        }
+        const remainingResponses = await Promise.all(promises);
+        remainingResponses.forEach(res => {
+          allItems = [...allItems, ...(res.items || [])];
+        });
+      }
+
+      setPosts(allItems);
     } catch (error) {
       const apiErr = normalizeApiError(error);
       if (apiErr.status === 401) {
