@@ -37,7 +37,7 @@ export default function DeleteUserButton({ user, onSuccess, onError }) {
         isOpen={isOpen}
         onClose={() => !isDeleting && setIsOpen(false)}
         title="Delete this user?"
-        message="This user account will be permanently removed."
+        message="This user account and all their posts will be permanently removed."
         confirmText={isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Delete'}
         cancelText="Cancel"
         onConfirm={handleConfirm}

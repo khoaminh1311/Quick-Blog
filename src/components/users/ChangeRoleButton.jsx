@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Key, Loader2, User as UserIcon, Shield, Check, ChevronDown } from 'lucide-react';
+import { Key, User as UserIcon, Shield, Check, ChevronDown } from 'lucide-react';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
 import { updateUserRole } from '../../services/userService';

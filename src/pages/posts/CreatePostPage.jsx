@@ -5,6 +5,7 @@ import PostForm from '../../components/posts/PostForm';
 import { createPost } from '../../services/postService';
 import { useAuth } from '../../hooks/useAuth';
 import ErrorState from '../../components/common/ErrorState';
+import { normalizeApiError } from '../../utils/apiError';
 
 export default function CreatePostPage() {
   const navigate = useNavigate();
@@ -19,10 +20,11 @@ export default function CreatePostPage() {
       await createPost(postData, accessToken);
       navigate('/');
     } catch (err) {
-      if (err.status === 401) {
+      const apiErr = normalizeApiError(err);
+      if (apiErr.status === 401) {
         logout();
       } else {
-        setError(err.message || 'Failed to create post. Please try again.');
+        setError(apiErr.message || 'Failed to create post. Please try again.');
       }
       setIsSubmitting(false); // only reset on error, on success we navigate away
     }

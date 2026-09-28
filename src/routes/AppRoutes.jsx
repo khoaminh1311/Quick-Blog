@@ -48,12 +48,12 @@ export default function AppRoutes() {
 
         {/* ── Public pages with Layout ──────────────────────────────────── */}
         <Route element={<AppLayout />}>
-          <Route path="/"              element={<HomePage />} />
-          <Route path="/posts/:postId" element={<PostDetailPage />} />
           <Route path="/forbidden"     element={<ForbiddenPage />} />
 
           {/* ── Protected: any authenticated user ─────────────────────────── */}
           <Route element={<ProtectedRoute />}>
+            <Route path="/"              element={<HomePage />} />
+            <Route path="/posts/:postId" element={<PostDetailPage />} />
             <Route path="/posts/new"     element={<CreatePostPage />} />
             <Route path="/my-posts"      element={<MyPostsPage />} />
 

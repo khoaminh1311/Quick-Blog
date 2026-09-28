@@ -42,7 +42,7 @@ export default function PostDetailPage() {
     };
 
     fetchPost();
-  }, [postId]);
+  }, [postId, accessToken, logout]);
 
   if (isLoading) {
     return (

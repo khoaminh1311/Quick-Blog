@@ -60,7 +60,8 @@ export default function HomePage() {
 
   // Fetch from page 1 whenever debounced search changes
   useEffect(() => {
-    fetchPosts(debouncedSearch, 1); // eslint-disable-line react-hooks/set-state-in-effect
+    // eslint-disable-next-line react-hooks/set-state-in-effect, react-hooks/exhaustive-deps
+    fetchPosts(debouncedSearch, 1);
   }, [debouncedSearch]);
 
   const handleLoadMore = () => {
@@ -72,6 +73,11 @@ export default function HomePage() {
   const handleRetry = () => {
     fetchPosts(debouncedSearch, page);
   };
+
+  const filteredPosts = posts.filter(post => 
+    !debouncedSearch || 
+    post.title?.toLowerCase().includes(debouncedSearch.toLowerCase())
+  );
 
   return (
     <Container>
@@ -101,7 +107,7 @@ export default function HomePage() {
             message={error}
             onRetry={handleRetry}
           />
-        ) : posts.length === 0 ? (
+        ) : filteredPosts.length === 0 ? (
           <EmptyState
             title="No posts found"
             message={debouncedSearch ? "Try adjusting your search query." : "There are no posts available right now."}
@@ -111,12 +117,7 @@ export default function HomePage() {
         ) : (
           <>
             <PostGrid>
-              {posts
-                .filter(post => 
-                  !debouncedSearch || 
-                  post.title?.toLowerCase().includes(debouncedSearch.toLowerCase())
-                )
-                .map(post => (
+              {filteredPosts.map(post => (
                   <PostCard 
                     key={post._id} 
                     post={post} 

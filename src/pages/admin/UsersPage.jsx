@@ -6,12 +6,14 @@ import UserTable from '../../components/users/UserTable';
 import { getUsers } from '../../services/userService';
 import { useAuth } from '../../hooks/useAuth';
 import { normalizeApiError } from '../../utils/apiError';
+import Skeleton from '../../components/common/Skeleton';
 
 export default function UsersPage() {
   const { accessToken, logout } = useAuth();
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [actionError, setActionError] = useState(null);
 
   const fetchUsers = async () => {
     setIsLoading(true);
@@ -21,7 +23,7 @@ export default function UsersPage() {
       setUsers(response.items || []);
     } catch (err) {
       const apiErr = normalizeApiError(err);
-      if (apiErr.status === 401 || apiErr.status === 403) {
+      if (apiErr.status === 401) {
         logout();
       } else {
         setError(apiErr.message || 'Failed to load users');
@@ -40,19 +42,21 @@ export default function UsersPage() {
   };
 
   const handleRoleChangeSuccess = (userId, newRole) => {
+    setActionError(null);
     setUsers(prev => prev.map(u => u._id === userId ? { ...u, role: newRole } : u));
   };
 
   const handleDeleteSuccess = (userId) => {
+    setActionError(null);
     setUsers(prev => prev.filter(u => u._id !== userId));
   };
 
   const handleActionError = (err) => {
     const apiErr = normalizeApiError(err);
     if (apiErr.status === 401) {
-      alert("Error: You do not have permission to perform this action. The server returned 401 Unauthorized.");
+      setActionError("Error: You do not have permission to perform this action. The server returned 401 Unauthorized.");
     } else {
-      alert(`Error: ${apiErr.message || 'Action failed'}`);
+      setActionError(`Error: ${apiErr.message || 'Action failed'}`);
     }
   };
 
@@ -69,8 +73,11 @@ export default function UsersPage() {
 
       <div className="pb-16 bg-slate-50 dark:bg-slate-900 rounded-3xl p-2 sm:p-4">
         {isLoading ? (
-          <div className="text-center text-slate-500 dark:text-slate-400 py-24">
-            Loading users...
+          <div className="space-y-4 py-8">
+            <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+            <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+            <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
+            <Skeleton variant="rectangular" className="w-full h-12 rounded-xl" />
           </div>
         ) : error ? (
           <ErrorState
@@ -79,13 +86,20 @@ export default function UsersPage() {
             onRetry={handleRetry}
           />
         ) : (
-          <UserTable 
-            users={users} 
-            onChangeRoleSuccess={handleRoleChangeSuccess}
-            onDeleteSuccess={handleDeleteSuccess}
-            onChangeRoleError={handleActionError}
-            onDeleteError={handleActionError}
-          />
+          <>
+            {actionError && (
+              <div className="mb-4 p-4 rounded-xl bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400 text-sm font-medium">
+                {actionError}
+              </div>
+            )}
+            <UserTable 
+              users={users} 
+              onChangeRoleSuccess={handleRoleChangeSuccess}
+              onDeleteSuccess={handleDeleteSuccess}
+              onChangeRoleError={handleActionError}
+              onDeleteError={handleActionError}
+            />
+          </>
         )}
       </div>
     </Container>
