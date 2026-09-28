@@ -17,7 +17,10 @@ import apiClient, { authHeader } from './apiClient';
  * @returns {Promise<{ items: object[], page: number, limit: number, total: number, totalPages: number }>}
  */
 export async function getPosts(accessToken) {
-  const response = await apiClient.get('/api/posts', authHeader(accessToken));
+  const response = await apiClient.get('/api/posts', {
+    ...authHeader(accessToken),
+    params: { limit: 1000 },
+  });
   return response.data;
 }
 
@@ -35,7 +38,7 @@ export async function getPosts(accessToken) {
 export async function getPostsByUser(userId, accessToken) {
   const response = await apiClient.get('/api/posts', {
     ...authHeader(accessToken),
-    params: { userId },
+    params: { userId, limit: 1000 },
   });
   return response.data;
 }

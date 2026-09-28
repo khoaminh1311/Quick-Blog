@@ -71,9 +71,9 @@ export function authReducer(state, action) {
     // The user can retry; a proper 401 from a future request will clear state.
     case AUTH_ACTIONS.RESTORE_NETWORK_ERROR:
       return {
-        status: 'unauthenticated',
-        accessToken: null,
-        user: null,
+        status: 'network_error',
+        accessToken: action.payload.accessToken,
+        user: action.payload.user,
         error: action.payload.message,
       };
 

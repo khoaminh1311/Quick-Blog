@@ -22,7 +22,16 @@ export default function MyPostsPage() {
     try {
       const response = await getPostsByUser(currentUser.id, accessToken);
       const allItems = response.items || [];
-      setPosts(allItems);
+
+      // Client-side filter: backend may return all posts if userId param
+      // is not supported. We filter by matching author._id or author string.
+      const myPosts = allItems.filter(post => {
+        const authorId =
+          typeof post.author === 'string' ? post.author : post.author?._id;
+        return authorId === currentUser.id;
+      });
+
+      setPosts(myPosts);
     } catch (err) {
       const apiErr = normalizeApiError(err);
       if (apiErr.status === 401) {

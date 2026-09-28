@@ -43,6 +43,7 @@ export default function DeleteUserButton({ user, onSuccess, onError }) {
         cancelText="Cancel"
         onConfirm={handleConfirm}
         isDestructive={true}
+        isLoading={isDeleting}
       />
     </>
   );

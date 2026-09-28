@@ -2,8 +2,10 @@
 import RoleBadge from './RoleBadge';
 import ChangeRoleButton from './ChangeRoleButton';
 import DeleteUserButton from './DeleteUserButton';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function UserTable({ users, onChangeRoleSuccess, onDeleteSuccess, onChangeRoleError, onDeleteError }) {
+  const { user: currentUser } = useAuth();
   return (
     <div className="min-h-[420px] rounded-lg bg-slate-50 p-3 dark:bg-slate-900">
       <div className="w-full overflow-x-auto">
@@ -44,18 +46,20 @@ export default function UserTable({ users, onChangeRoleSuccess, onDeleteSuccess,
                     <RoleBadge role={user.role} />
                   </td>
                   <td className="border-b border-slate-100 px-4 py-4 align-top dark:border-slate-800 text-center">
-                    <div className="flex items-center justify-center gap-3">
-                      <DeleteUserButton 
-                        user={user} 
-                        onSuccess={onDeleteSuccess}
-                        onError={onDeleteError}
-                      />
-                      <ChangeRoleButton 
-                        user={user} 
-                        onSuccess={onChangeRoleSuccess}
-                        onError={onChangeRoleError}
-                      />
-                    </div>
+                    {user._id !== currentUser?.id && (
+                      <div className="flex items-center justify-center gap-3">
+                        <DeleteUserButton 
+                          user={user} 
+                          onSuccess={onDeleteSuccess}
+                          onError={onDeleteError}
+                        />
+                        <ChangeRoleButton 
+                          user={user} 
+                          onSuccess={onChangeRoleSuccess}
+                          onError={onChangeRoleError}
+                        />
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))

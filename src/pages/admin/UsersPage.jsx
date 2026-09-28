@@ -53,6 +53,8 @@ export default function UsersPage() {
   const handleActionError = (err) => {
     const apiErr = normalizeApiError(err);
     if (apiErr.status === 401) {
+      logout();
+    } else if (apiErr.status === 403) {
       setActionError("You do not have permission to perform this action.");
     } else {
       setActionError(apiErr.message || 'Action failed. Please try again.');

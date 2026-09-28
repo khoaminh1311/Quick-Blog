@@ -5,7 +5,7 @@
 import { createContext, useReducer, useEffect, useCallback } from 'react';
 import { authReducer, initialAuthState, AUTH_ACTIONS } from '../reducers/authReducer';
 import { login as loginService, register as registerService, getCurrentUser } from '../services/authService';
-import { saveSession, clearSession, getStoredToken, ACCESS_TOKEN_KEY } from '../utils/authStorage';
+import { saveSession, clearSession, getStoredToken, getStoredUser, ACCESS_TOKEN_KEY } from '../utils/authStorage';
 import { normalizeApiError } from '../utils/apiError';
 
 // ─── Context ───────────────────────────────────────────────────────────────
@@ -53,14 +53,16 @@ export function AuthProvider({ children }) {
           dispatch({ type: AUTH_ACTIONS.RESTORE_FAILED });
         } else {
           // Network error / server down during restore.
-          // We clear the session because we cannot confirm the token is valid.
-          // The user will see an error message and can log in again once the
-          // network recovers. This is safer than trusting a potentially expired
-          // token without server confirmation.
-          clearSession();
+          // We DO NOT clear the session because we cannot confirm the token is invalid.
+          // The user will see a network error message and can retry.
+          const storedUser = getStoredUser();
           dispatch({
             type: AUTH_ACTIONS.RESTORE_NETWORK_ERROR,
-            payload: { message: 'Could not connect to the server. Please try logging in again.' },
+            payload: { 
+              message: 'Không kết nối được máy chủ', 
+              accessToken: storedToken, 
+              user: storedUser 
+            },
           });
         }
       }
