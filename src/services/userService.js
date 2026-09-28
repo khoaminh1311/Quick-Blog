@@ -26,7 +26,7 @@ export async function getUsers(accessToken) {
  * Requires: Bearer access token.
  * Body: { role }
  * Valid role values: 'user', 'admin'
- * Response: confirmed shape unknown — raw data returned as-is.
+ * Response: 200 OK
  *
  * @param {string} userId
  * @param {'user' | 'admin'} role
@@ -47,7 +47,7 @@ export async function updateUserRole(userId, role, accessToken) {
  *
  * DELETE /api/users/:id
  * Requires: Bearer access token.
- * Response: confirmed shape unknown — raw data returned as-is.
+ * Response: { success: true, message: "..." }
  *
  * @param {string} userId
  * @param {string} accessToken
