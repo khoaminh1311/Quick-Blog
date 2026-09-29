@@ -7,6 +7,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { normalizeApiError } from '../../utils/apiError';
 import DeletePostButton from '../../components/posts/DeletePostButton';
 import { stripHtmlAndTruncate } from '../../utils/postContent';
+import { fetchAllPages } from '../../utils/pagination';
 
 export default function MyPostsPage() {
   const { user: currentUser, accessToken, logout } = useAuth();
@@ -20,30 +21,8 @@ export default function MyPostsPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const firstResponse = await getPostsByUser(currentUser.id, accessToken, 1);
-      let allItems = [...(firstResponse.items || [])];
-      const totalPages = firstResponse.totalPages || 1;
-
-      if (totalPages > 1) {
-        const promises = [];
-        for (let i = 2; i <= totalPages; i++) {
-          promises.push(getPostsByUser(currentUser.id, accessToken, i));
-        }
-        const remainingResponses = await Promise.all(promises);
-        remainingResponses.forEach(res => {
-          allItems = [...allItems, ...(res.items || [])];
-        });
-      }
-
-      // Client-side filter: backend may return all posts if userId param
-      // is not supported. We filter by matching author._id or author string.
-      const myPosts = allItems.filter(post => {
-        const authorId =
-          typeof post.author === 'string' ? post.author : post.author?._id;
-        return authorId === currentUser.id;
-      });
-
-      setPosts(myPosts);
+      const allItems = await fetchAllPages((page) => getPostsByUser(currentUser.id, accessToken, page));
+      setPosts(allItems);
     } catch (err) {
       const apiErr = normalizeApiError(err);
       if (apiErr.status === 401) {
