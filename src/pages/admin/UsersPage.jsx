@@ -6,6 +6,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { normalizeApiError } from '../../utils/apiError';
 import Skeleton from '../../components/common/Skeleton';
 import Toast from '../../components/common/Toast';
+import { fetchAllPages } from '../../utils/pagination';
 
 export default function UsersPage() {
   const { accessToken, logout } = useAuth();
@@ -18,21 +19,7 @@ export default function UsersPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const firstResponse = await getUsers(accessToken, 1);
-      let allItems = [...(firstResponse.items || [])];
-      const totalPages = firstResponse.totalPages || 1;
-
-      if (totalPages > 1) {
-        const promises = [];
-        for (let i = 2; i <= totalPages; i++) {
-          promises.push(getUsers(accessToken, i));
-        }
-        const remainingResponses = await Promise.all(promises);
-        remainingResponses.forEach(res => {
-          allItems = [...allItems, ...(res.items || [])];
-        });
-      }
-
+      const allItems = await fetchAllPages((page) => getUsers(accessToken, page));
       setUsers(allItems);
     } catch (err) {
       const apiErr = normalizeApiError(err);
