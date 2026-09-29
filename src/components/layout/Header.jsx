@@ -19,12 +19,13 @@ import { useAuth } from '../../hooks/useAuth';
 import logoImg from '../quick-blog-logo.png';
 
 export default function Header() {
-  const { isAuthenticated, user, logout } = useAuth();
+  const { isAuthenticated, isNetworkError, user, logout } = useAuth();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  const isAdmin = isAuthenticated && user?.role === 'admin';
+  const showUserMenu = isAuthenticated || (isNetworkError && user);
+  const isAdmin = showUserMenu && user?.role === 'admin';
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -93,7 +94,7 @@ export default function Header() {
 
             {isDropdownOpen && (
               <div className="absolute right-0 mt-2 z-50 min-w-[12.5rem] w-52 rounded-lg border border-slate-100 bg-white p-1.5 shadow-lg shadow-slate-900/10 dark:border-slate-800 dark:bg-slate-900">
-                {isAuthenticated ? (
+                {showUserMenu ? (
                   <>
                     <Link
                       to="/posts/new"
