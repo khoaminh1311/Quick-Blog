@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import ErrorState from '../../components/common/ErrorState';
 import EmptyState from '../../components/common/EmptyState';
 import PostCard from '../../components/posts/PostCard';
@@ -19,7 +19,7 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState('');
   const debouncedSearch = useDebounce(searchTerm, 500);
 
-  const fetchPosts = async () => {
+  const fetchPosts = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -50,14 +50,12 @@ export default function HomePage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [accessToken, logout]);
 
-  // Fetch only ONCE on mount
+  // Fetch only ONCE on mount (or when auth state changes)
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchPosts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [fetchPosts]);
 
   const handleRetry = () => {
     fetchPosts();

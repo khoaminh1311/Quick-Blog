@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import ErrorState from '../../components/common/ErrorState';
 import UserTable from '../../components/users/UserTable';
 import { getUsers } from '../../services/userService';
@@ -14,7 +14,7 @@ export default function UsersPage() {
   const [error, setError] = useState(null);
   const [actionError, setActionError] = useState(null);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -44,11 +44,11 @@ export default function UsersPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [accessToken, logout]);
 
   useEffect(() => {
-    fetchUsers(); // eslint-disable-line react-hooks/set-state-in-effect
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    fetchUsers();
+  }, [fetchUsers]);
 
   const handleRetry = () => {
     fetchUsers();
