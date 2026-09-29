@@ -52,7 +52,7 @@ export default function LoginPage() {
     } catch (err) {
       // err is already a normalized { status, message, data } object.
       const msg = (err.status === 401 || err.message === 'Unauthorized' || err.message?.toLowerCase().includes('credential'))
-        ? 'Sai email hoặc mật khẩu'
+        ? 'Incorrect email or password'
         : (err.message || 'Login failed. Please try again.');
       setServerError(msg);
     } finally {
