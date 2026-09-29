@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import ErrorState from '../../components/common/ErrorState';
 import Skeleton from '../../components/common/Skeleton';
@@ -14,7 +14,7 @@ export default function MyPostsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const fetchMyPosts = async () => {
+  const fetchMyPosts = useCallback(async () => {
     if (!currentUser?.id) return;
     
     setIsLoading(true);
@@ -54,13 +54,11 @@ export default function MyPostsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentUser?.id, accessToken, logout]);
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchMyPosts();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentUser?.id]);
+  }, [fetchMyPosts]);
 
   const handleRetry = () => {
     fetchMyPosts();
