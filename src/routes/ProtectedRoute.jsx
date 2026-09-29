@@ -40,13 +40,13 @@ export default function ProtectedRoute() {
   if (status === 'network_error') {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-slate-50 p-4 text-center dark:bg-slate-950">
-        <h2 className="mb-2 text-2xl font-bold text-slate-900 dark:text-slate-100">Không kết nối được máy chủ</h2>
-        <p className="mb-6 text-slate-600 dark:text-slate-400">Vui lòng kiểm tra lại kết nối mạng của bạn và thử lại.</p>
+        <h2 className="mb-2 text-2xl font-bold text-slate-900 dark:text-slate-100">Unable to connect to the server</h2>
+        <p className="mb-6 text-slate-600 dark:text-slate-400">Please check your internet connection and try again.</p>
         <button
           onClick={() => window.location.reload()}
           className="rounded-md bg-indigo-600 px-6 py-2 font-medium text-white transition-colors hover:bg-indigo-700"
         >
-          Thử lại
+          Retry
         </button>
       </div>
     );

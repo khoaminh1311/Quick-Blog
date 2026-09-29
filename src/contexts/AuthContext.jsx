@@ -59,7 +59,7 @@ export function AuthProvider({ children }) {
           dispatch({
             type: AUTH_ACTIONS.RESTORE_NETWORK_ERROR,
             payload: { 
-              message: 'Không kết nối được máy chủ', 
+              message: 'Unable to connect to the server', 
               accessToken: storedToken, 
               user: storedUser 
             },
@@ -176,6 +176,7 @@ export function AuthProvider({ children }) {
     // Derived helpers (convenient booleans)
     isInitializing: authState.status === 'initializing',
     isAuthenticated: authState.status === 'authenticated',
+    isNetworkError: authState.status === 'network_error',
 
     // Actions
     login,
